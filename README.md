@@ -1,17 +1,6 @@
 # 🦙 LaMa finetuned to deal with office document
 
-
 # LaMa development
-(Feel free to share your paper by creating an issue)
-- https://github.com/geekyutao/Inpaint-Anything --- Inpaint Anything: Segment Anything Meets Image Inpainting
-<p align="center">
-  <img src="https://raw.githubusercontent.com/geekyutao/Inpaint-Anything/main/example/MainFramework.png" />
-</p>
-
-- [Feature Refinement to Improve High Resolution Image Inpainting](https://arxiv.org/abs/2206.13644) / [video](https://www.youtube.com/watch?v=gEukhOheWgE) / code https://github.com/advimman/lama/pull/112 / by Geomagical Labs ([geomagical.com](geomagical.com))
-<p align="center">
-  <img src="https://raw.githubusercontent.com/senya-ashukha/senya-ashukha.github.io/master/images/FeatureRefinement.png" />
-</p>
 
 # Non-official 3rd party apps:
 (Feel free to share your app/implementation/demo by creating an issue)
@@ -31,47 +20,33 @@
 
 # Environment setup
 
-❗️❗️❗️ All yandex dist links went bad, you can download the model from the [google drive](https://drive.google.com/drive/folders/1B2x7eQDgecTL0oh3LSIBDGj0fTxs6Ips?usp=sharing) ❗️❗️❗️
-
 Clone the repo:
 `git clone https://github.com/advimman/lama.git`
 
-There are three options of an environment:
-
-1. Python virtualenv:
-
-    ```
-    virtualenv inpenv --python=/usr/bin/python3
-    source inpenv/bin/activate
-    pip install torch==1.8.0 torchvision==0.9.0
-    
-    cd lama
-    pip install -r requirements.txt 
-    ```
-
-2. Conda
-    
-    ```
-    % Install conda for Linux, for other OS download miniconda at https://docs.conda.io/en/latest/miniconda.html
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
-    $HOME/miniconda/bin/conda init bash
-
-    cd lama
-    conda env create -f conda_env.yml
-    conda activate lama
-    conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch -y
-    pip install pytorch-lightning==1.2.9
-    ```
  
-3. Docker: No actions are needed 🎉.
-
-# Inference <a name="prediction"></a>
-
-Run
+**0. Run by docker**
 ```
-cd lama
-export TORCH_HOME=$(pwd) && export PYTHONPATH=$(pwd)
+bash docker/build.sh
+bash fetch_data/download_big_lama.sh
+bash fetch_data/generate_test_data.sh
+docker run \
+    -v "/Users/ywlee/Desktop/code/projects/lama-finetune-demo":/home/user/project \
+    -v "/Users/ywlee/Desktop/code/projects/lama-finetune-demo/big-lama":/data/checkpoint \
+    -v "/Users/ywlee/Desktop/code/projects/lama-finetune-demo/test_images":/data/input \
+    -v "/Users/ywlee/Desktop/code/projects/lama-finetune-demo/output":/data/output \
+    -u $(id -u):$(id -g) \
+    --platform linux/amd64 \
+    --name="lama-predict" \
+    --rm \
+    ywlee/lama \
+    /home/user/project/bin/predict.py \
+        model.path=/data/checkpoint \
+        indir=/data/input \
+        outdir=/data/output \
+        dataset.img_suffix=.png \
+        device=cpu \
+        hydra.run.dir=/data/output/.hydra_run \
+        hydra.output_subdir=null
 ```
 
 **1. Download pre-trained models**

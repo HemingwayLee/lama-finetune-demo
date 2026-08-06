@@ -18,7 +18,7 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.plugins import DDPPlugin
 
-from saicinpainting.training.trainers import make_training_model
+from saicinpainting.training.trainers import make_training_model, load_checkpoint
 from saicinpainting.utils import register_debug_signal_handlers, handle_ddp_subprocess, handle_ddp_parent_process, \
     handle_deterministic_config
 
@@ -48,7 +48,15 @@ def main(config: OmegaConf):
         metrics_logger = TensorBoardLogger(config.location.tb_dir, name=os.path.basename(os.getcwd()))
         metrics_logger.log_hyperparams(config)
 
-        training_model = make_training_model(config)
+        # finetune_from initializes weights from a pretrained checkpoint (e.g. big-lama)
+        # with strict=False, so it tolerates architecture differences from the current
+        # config (e.g. losses.resnet_pl disabled) -- unlike Trainer's own
+        # resume_from_checkpoint, which does a strict full-state resume (model +
+        # optimizer + epoch) and is meant for continuing an identical, interrupted run.
+        if config.get('finetune_from'):
+            training_model = load_checkpoint(config, config.finetune_from, map_location='cpu', strict=False)
+        else:
+            training_model = make_training_model(config)
 
         trainer_kwargs = OmegaConf.to_container(config.trainer.kwargs, resolve=True)
         if need_set_deterministic:

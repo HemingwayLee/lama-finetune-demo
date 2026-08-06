@@ -51,11 +51,11 @@ def process_images(src_images, indir, outdir, config):
                     continue
                 elif handle_small_mode == SmallMode.UPSCALE:
                     factor = config.cropping.out_min_size / min(image.size)
-                    out_size = (np.array(image.size) * factor).round().astype('uint32')
+                    out_size = tuple((np.array(image.size) * factor).round().astype(int).tolist())
                     image = image.resize(out_size, resample=Image.BICUBIC)
             else:
                 factor = config.cropping.out_min_size / min(image.size)
-                out_size = (np.array(image.size) * factor).round().astype('uint32')
+                out_size = tuple((np.array(image.size) * factor).round().astype(int).tolist())
                 image = image.resize(out_size, resample=Image.BICUBIC)
 
             # generate and select masks

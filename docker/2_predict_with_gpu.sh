@@ -13,10 +13,9 @@ SRCDIR="$(realpath $SRCDIR)"
 
 MODEL_LOCAL_DIR="$(realpath $1)"
 INPUT_LOCAL_DIR="$(realpath $2)"
+mkdir -p "$3"
 OUTPUT_LOCAL_DIR="$(realpath $3)"
 shift 3
-
-mkdir -p "$OUTPUT_LOCAL_DIR"
 
 docker run \
     -v "$SRCDIR":/home/user/project \

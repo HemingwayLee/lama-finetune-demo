@@ -1,0 +1,9 @@
+{
+  "name": "lama-fetch-data-tools",
+  "private": true,
+  "description": "Node helper scripts for generating synthetic table images and test masks for LaMa inference and training.",
+  "dependencies": {
+    "jpeg-js": "^0.4.4",
+    "pngjs": "^7.0.0"
+  }
+}

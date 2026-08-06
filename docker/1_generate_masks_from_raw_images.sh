@@ -13,10 +13,9 @@ SRCDIR="$(realpath $SRCDIR)"
 
 CONFIG_LOCAL_PATH="$(realpath $1)"
 INPUT_LOCAL_DIR="$(realpath $2)"
+mkdir -p "$3"
 OUTPUT_LOCAL_DIR="$(realpath $3)"
 shift 3
-
-mkdir -p "$OUTPUT_LOCAL_DIR"
 
 docker run \
     -v "$SRCDIR":/home/user/project \
@@ -24,6 +23,7 @@ docker run \
     -v "$INPUT_LOCAL_DIR":/data/input \
     -v "$OUTPUT_LOCAL_DIR":/data/output \
     -u $(id -u):$(id -g) \
+    --platform linux/amd64 \
     --name="lama-mask-gen" \
     --rm \
     ywlee/lama \

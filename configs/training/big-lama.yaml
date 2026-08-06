@@ -1,5 +1,10 @@
 run_title: ''
 
+# Path to a pretrained checkpoint (e.g. big-lama/models/best.ckpt) to initialize
+# weights from for finetuning. Loaded non-strictly, so it tolerates config/architecture
+# differences (e.g. losses.resnet_pl disabled) -- see bin/train.py.
+finetune_from: null
+
 training_model:
   kind: default
   visualize_each_iters: 1000
