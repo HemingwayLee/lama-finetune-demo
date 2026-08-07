@@ -12,7 +12,14 @@ SRCDIR="$CURDIR/.."
 SRCDIR="$(realpath $SRCDIR)"
 
 CONFIG_LOCAL_PATH="$(realpath $1)"
+
+mkdir -p "$2"
 INPUT_LOCAL_DIR="$(realpath $2)"
+if [ -z "$(ls -A "$INPUT_LOCAL_DIR" 2>/dev/null)" ]
+then
+    echo "Warning: input dir $INPUT_LOCAL_DIR is empty, add images to it before running or the output will be empty too."
+fi
+
 mkdir -p "$3"
 OUTPUT_LOCAL_DIR="$(realpath $3)"
 shift 3

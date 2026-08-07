@@ -1,4 +1,29 @@
 # 🦙 LaMa finetuned to deal with office document
+* Build docker
+```
+bash docker/build.sh
+```
+
+* Generate data
+```
+fetch_data/generate_test_data.sh
+fetch_data/generate_training_dataset.sh
+```
+
+* Predict
+```
+bash docker/2_predict.sh $(pwd)/big-lama $(pwd)/test_images $(pwd)/output device=cpu
+```
+
+* Finetune
+```
+bash docker/2_train.sh $(pwd)/big-lama $(pwd)/training_data $(pwd)/experiments \
+    --config-name big-lama.yaml \
+    finetune_from=/data/checkpoint/models/best.ckpt \
+    trainer.kwargs.gpus=0 trainer.kwargs.accelerator=null \
+    losses.resnet_pl.weight=0 \
+    data.val_batch_size=1 +data.val.pad_out_to_modulo=32
+```
 
 # LaMa development
 

@@ -13,6 +13,11 @@
 # Usage:
 #   docker/2_train.sh pretrained_model_dir data_dir out_dir [other args to bin/train.py]
 #
+#   If passing --config-name/--config-path/other Hydra flags, put them first
+#   among the extra args (before any key=value overrides) -- Hydra's argparse
+#   can't bind a single nargs='*' overrides list across two groups split by
+#   a flag in the middle.
+#
 #   pretrained_model_dir  e.g. $(pwd)/big-lama -- mounted read-only-ish at
 #                         /data/checkpoint; pass finetune_from=/data/checkpoint/models/best.ckpt
 #                         as one of the extra args to actually initialize from it
@@ -63,10 +68,10 @@ docker run \
     --rm \
     ywlee/lama \
     /home/user/project/bin/train.py \
+        $@ \
         location.data_root_dir=/data/data \
         location.out_root_dir=/data/experiments \
         location.tb_dir=/data/tb_logs \
         location.pretrained_models=/data/checkpoint \
         hydra.run.dir=/data/experiments/.hydra_run \
-        hydra.output_subdir=null \
-        $@
+        hydra.output_subdir=null

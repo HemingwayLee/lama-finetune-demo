@@ -1,5 +1,9 @@
 .DS_Store
 big-lama/
+test_images/
+training_data/
+experiments/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
