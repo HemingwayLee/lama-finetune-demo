@@ -28,14 +28,14 @@ bash fetch_data/generate_training_dataset.sh
   To use a table you saved from `index.html` as test data, put it in `test_images/` and generate a matching mask next to it with `node fetch_data/generate_test_mask.js test_images/<name>.png [rect_count]`. This writes `<name>_mask001.png`, the naming LaMa's predict step expects.
 
 * Predict
+  * When we do prediction, it uses `big-lama/models/best.ckpt` checkpoint
   * The result will be in `output` folder
 ```
 bash docker/2_predict.sh $(pwd)/big-lama $(pwd)/test_images $(pwd)/output device=cpu
 ```
 
-
-
 * Finetune
+  * When we do finetuning, it will start from `big-lama/models/best.ckpt` as based checkpoint
 ```
 bash docker/2_train.sh $(pwd)/big-lama $(pwd)/training_data $(pwd)/experiments \
     --config-name big-lama.yaml \
