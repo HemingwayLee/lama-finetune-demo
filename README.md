@@ -1,19 +1,39 @@
 # 🦙 LaMa finetuned to deal with office document
-* Build docker
+* Build by docker
 ```
 bash docker/build.sh
 ```
 
 * Generate data
+
+  All data is synthetic: randomly laid-out tables (random rows/columns, merged cells, border styles, cell colors and dot/stripe/grid patterns) with random rectangular masks to inpaint.
+
+  * **Preview with `fetch_data/index.html`**: open it in a browser (`open fetch_data/index.html`), click **Generate** to draw a random table, and **Save** to download it as a `table-<timestamp>.png`. Use it to see what the generator produces, or to hand-pick individual samples.
+  * **Bulk generation (headless)**: the scripts below don't open the page. They use `fetch_data/lib/table_generator.js`, a Node port of the page's `generateTable()`/`saveTable()`, so their output matches what the page draws. Masks come from `fetch_data/lib/mask_generator.js`: 2–5 white rectangles (area to inpaint) on black. Node dependencies (`pngjs`, `jpeg-js`) are installed automatically the first time a script runs.
+    * If you change the table algorithm in `index.html`, make the same change in `lib/table_generator.js`; otherwise the generated datasets won't match the preview.
+
 ```
-fetch_data/generate_test_data.sh
-fetch_data/generate_training_dataset.sh
+# Test data: test_images/table.png + test_images/table_mask001.png
+#   args: [outdir] [rect_count]   (defaults: test_images/, random 2-5)
+bash fetch_data/generate_test_data.sh
+
+# Training data under training_data/:
+#   train/        raw .jpg tables, no masks (masks are generated on the fly during training)
+#   val/          .png table + _mask001.png pairs
+#   visual_test/  .png table + _mask001.png pairs
+#   args: [outdir] [train_n] [val_n] [visual_test_n]   (defaults: training_data/ 200 20 20)
+bash fetch_data/generate_training_dataset.sh
 ```
 
+  To use a table you saved from `index.html` as test data, put it in `test_images/` and generate a matching mask next to it with `node fetch_data/generate_test_mask.js test_images/<name>.png [rect_count]`. This writes `<name>_mask001.png`, the naming LaMa's predict step expects.
+
 * Predict
+  * The result will be in `output` folder
 ```
 bash docker/2_predict.sh $(pwd)/big-lama $(pwd)/test_images $(pwd)/output device=cpu
 ```
+
+
 
 * Finetune
 ```
