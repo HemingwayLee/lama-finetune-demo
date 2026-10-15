@@ -36,6 +36,7 @@ bash docker/2_predict.sh $(pwd)/big-lama $(pwd)/test_images $(pwd)/output device
 
 * Finetune
   * When we do finetuning, it will start from `big-lama/models/best.ckpt` as based checkpoint
+  * We need at least 250,000 training images to run this finetuning command
 ```
 bash docker/2_train.sh $(pwd)/big-lama $(pwd)/training_data $(pwd)/experiments \
     --config-name big-lama.yaml \
